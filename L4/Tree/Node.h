@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../Result/Result.hpp"
+#include "../Error/Error.h"
 
 enum nodeType {
     NODE_UNKNOWN,

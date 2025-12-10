@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "Result.tpp"
-#include "../Error/Error.h"
 
 template<typename T, typename E>
 void Result<T, E>::swap(Result &other) {

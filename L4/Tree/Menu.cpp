@@ -68,7 +68,7 @@ void Menu::handleSave(const std::string& file_name) {
 
 void Menu::run() {
     bool running = true;
-    std::cout << "Uruchomiono program drzewa. Dostepne komendy: enter, vars, print, comp, join, exit" << std::endl;
+    std::cout << "Uruchomiono program drzewa. Dostepne komendy: enter, vars, print, comp, join, save, exit" << std::endl;
 
     while (running) {
         std::string line;
@@ -104,7 +104,7 @@ void Menu::run() {
                 else if (command == "join") {
                     handleJoin(args);
                 }
-                else if (command == "save") { // NOWE
+                else if (command == "save") {
                     handleSave(args);
                 }
                 else if (command == "exit") {

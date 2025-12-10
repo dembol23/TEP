@@ -11,7 +11,7 @@ class FileSaver {
     public:
     template <typename T>
     static void save(Result<T, Error>& result, const std::string& filename) {
-        std::ofstream file(filename.c_str(), std::ios::app); // ios::app dopisuje do pliku
+        std::ofstream file(filename.c_str(), std::ios::app);
         if (!file.is_open()) return;
 
         if (!result.isSuccess()) {

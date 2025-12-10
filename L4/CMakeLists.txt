@@ -13,6 +13,5 @@ add_executable(L4 main.cpp
         Tree/Tree.h
         Tree/Menu.cpp
         Tree/Menu.h
-        FileSaver/FileSaver.cpp
         FileSaver/FileSaver.h
         Result/Result.tpp)
