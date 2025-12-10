@@ -43,25 +43,3 @@ public:
 private:
     std::vector<E*> errors;
 };
-
-template <typename E>
-class Result<Node*, E>
-{
-public:
-    Result();
-    explicit Result(Node* node);
-    explicit Result(E *error);
-    explicit Result(std::vector<E*>& errors_given);
-    Result(const Result& other);
-    ~Result();
-    static Result success();
-    static Result fail(E* error);
-    static Result fail(std::vector<E*>& errors);
-    Result& operator=(const Result& other);
-    bool isSuccess();
-    Node* getValue() const;
-    std::vector<E*>& getErrors();
-private:
-    Node* value;
-    std::vector<E*> errors;
-};
