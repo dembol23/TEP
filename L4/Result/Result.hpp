@@ -147,3 +147,81 @@ template<typename E>
 bool Result<void, E>::isSuccess() {
     return errors.empty();
 }
+
+template<typename E>
+void Result<Node*, E>::swap(Result &other) {
+    std::swap(value, other.value);
+    std::swap(errors, other.errors);
+}
+
+template<typename E>
+Result<Node*, E>::Result() : value(nullptr) {}
+
+template<typename E>
+Result<Node*, E>::Result(Node* value) : value(value) {}
+
+template<typename E>
+Result<Node*, E>::Result(E* error) : value(nullptr) {
+    errors.push_back(error);
+}
+
+template<typename E>
+Result<Node*, E>::Result(std::vector<E*>& errors_given) : value(nullptr) {
+    for (size_t i = 0; i < errors_given.size(); ++i) {
+        errors.push_back(new E(*errors_given[i]));
+    }
+}
+
+template<typename E>
+Result<Node*, E>::Result(const Result& other) : value(other.value) {
+    for (size_t i = 0; i < other.errors.size(); ++i) {
+        errors.push_back(new E(*other.errors[i]));
+    }
+}
+
+template<typename E>
+Result<Node*, E>::~Result() {
+    for (size_t i = 0; i < errors.size(); ++i) {
+        delete errors[i];
+    }
+    errors.clear();
+}
+
+template<typename E>
+Result<Node*, E> Result<Node*, E>::success(Node* value) {
+    return Result(value);
+}
+
+template<typename E>
+Result<Node*, E> Result<Node*, E>::fail(E* error) {
+    return Result(error);
+}
+
+template<typename E>
+Result<Node*, E> Result<Node*, E>::fail(std::vector<E*>& errors) {
+    return Result(errors);
+}
+
+template<typename E>
+Result<Node*, E>& Result<Node*, E>::operator=(const Result& other) {
+    if (this != &other) {
+        Result temp(other);
+        this->swap(temp);
+    }
+    return *this;
+}
+
+template<typename E>
+bool Result<Node*, E>::isSuccess() {
+    return errors.empty();
+}
+
+template<typename E>
+Node* Result<Node*, E>::getValue() {
+    return value;
+}
+
+template<typename E>
+std::vector<E*>& Result<Node*, E>::getErrors() {
+    return errors;
+}
