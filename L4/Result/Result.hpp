@@ -9,7 +9,6 @@ void Result<T, E>::swap(Result &other) {
     std::swap(errors, other.errors);
 }
 
-
 template<typename T, typename E>
 Result<T, E>::Result():value(nullptr) {}
 

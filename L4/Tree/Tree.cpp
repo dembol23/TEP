@@ -188,8 +188,7 @@ Result<double, Error> Tree::comp(const std::string& formula) {
     std::stringstream ss(formula);
     double value;
     std::map<std::string, double>::iterator var_it = variables.begin();
-    bool running = true;
-    while (running && ss >> value) {
+    while (ss >> value) {
         if (var_it != variables.end()) {
             var_it->second = value;
             ++var_it;

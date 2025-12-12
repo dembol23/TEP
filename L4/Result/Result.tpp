@@ -66,3 +66,6 @@ private:
     std::vector<E*> errors;
     void swap(Result& other);
 };
+
+template<typename T>
+class Result<T, T>;
