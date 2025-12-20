@@ -34,10 +34,15 @@ private:
     void join(const Tree& other);
     static std::string printPrefixRecursive(const Node *node);
 public:
+    static int move_counter;
+    static int copy_counter;
+    static void resetCounters() {move_counter = copy_counter = 0;};
     Tree();
     Tree(const Tree &other);
+    Tree(Tree &&other);
     ~Tree();
     Tree& operator=(const Tree &other);
+    Tree& operator=(Tree &&other);
     Tree operator+(const Tree &other) const;
     std::string enter(const std::string &formula);
     std::string vars();

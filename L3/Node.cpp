@@ -5,6 +5,8 @@
 #include <ostream>
 #include <cmath>
 
+#include "Tree.h"
+
 void Node::swap(Node& other) {
     std::swap(value, other.value);
     std::swap(type, other.type);
@@ -17,6 +19,7 @@ Node::Node(const std::string& value, const nodeType type)
     : value(value), type(type) {}
 
 Node::Node(const Node &other) : value(other.value), type(other.type) {
+    Tree::copy_counter++;
     for (size_t i = 0; i < other.children.size(); ++i) {
         Node* childCopy = new Node(*other.children[i]);
         children.push_back(childCopy);

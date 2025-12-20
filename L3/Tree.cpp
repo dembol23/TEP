@@ -32,6 +32,10 @@ static std::string validateVariable(const std::string &s) {
     }
     return "";
 }
+
+int Tree::move_counter = 0;
+int Tree::copy_counter = 0;
+
 // =========
 
 Tree::Tree():root(nullptr) {}
@@ -47,6 +51,15 @@ Tree::Tree(const Tree &other) {
         root = nullptr;
 }
 
+Tree::Tree(Tree &&other) {
+    move_counter++;
+    root = other.root;
+    variables = other.variables;
+    other.root = nullptr;
+    std::cout << "PRZENIESIENIE DRZEWA (MOVE)\n";
+}
+
+
 Tree& Tree::operator=(const Tree &other) {
     if (this != &other) {
         delete root;
@@ -58,6 +71,18 @@ Tree& Tree::operator=(const Tree &other) {
     }
     return *this;
 }
+
+Tree &Tree::operator=(Tree &&other) {
+    if (this != &other) {
+        move_counter++;
+        delete root;
+        root = other.root;
+        variables = other.variables;
+        other.root = nullptr;
+    }
+    return *this;
+}
+
 
 Tree Tree::operator+(const Tree &other) const {
     Tree result(*this);
