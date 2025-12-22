@@ -6,6 +6,7 @@
 Evaluator::Evaluator():capacity(0),dimension(0) {}
 
 Evaluator::Evaluator(const std::string &file_name) {
+    loadFile(file_name);
 }
 
 Evaluator::~Evaluator() {}

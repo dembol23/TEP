@@ -45,6 +45,21 @@ bool Result<T, E>::isSuccess() {
     return errors.empty();
 }
 
+template<typename T, typename E>
+std::string Result<T, E>::errorsToString() {
+    std::string str;
+    if (!errors.empty()) {
+        for (int i = 0; i < errors.size(); i++) {
+            str += '[' + std::to_string(i) + "]: " + errors[i]->getMessage() + "\n";
+        }
+    }
+    else {
+        str += "No Errors";
+    }
+    return str;
+}
+
+
 // Result z voidem
 
 template<typename E>
@@ -90,4 +105,18 @@ std::vector<SmartPointer<E>> &Result<void, E>::getErrors() {
 template<typename E>
 bool Result<void, E>::isSuccess() {
     return errors.empty();
+}
+
+template<typename E>
+std::string Result<void, E>::errorsToString() {
+    std::string str;
+    if (!errors.empty()) {
+        for (int i = 0; i < errors.size(); i++) {
+            str += '[' + std::to_string(i) + "]: " + errors[i]->getMessage() + "\n";
+        }
+    }
+    else {
+        str += "No Errors";
+    }
+    return str;
 }

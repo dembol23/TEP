@@ -19,6 +19,7 @@ public:
     bool isSuccess();
     T getValue();
     std::vector<SmartPointer<E>>& getErrors();
+    std::string errorsToString();
 private:
     SmartPointer<T> value;
     std::vector<SmartPointer<E>> errors;
@@ -37,6 +38,7 @@ public:
     static Result fail(std::vector<SmartPointer<E>>& errors);
     bool isSuccess();
     std::vector<SmartPointer<E>>& getErrors();
+    std::string errorsToString();
 private:
     std::vector<SmartPointer<E>> errors;
 };

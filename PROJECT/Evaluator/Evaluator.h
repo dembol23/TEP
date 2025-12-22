@@ -12,6 +12,8 @@ public:
     ~Evaluator();
     Result<void, Error> loadFile(std::string file_name);
     double evaluate(const Instance& instance);
+    int getCapacity() const {return capacity;}
+    int getDimension() const {return dimension;}
 private:
     int capacity;
     int dimension;
