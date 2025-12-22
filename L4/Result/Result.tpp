@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../L5/SmartPointer/SmartPointer.h"
-
 class Node;
 
 template <typename T, typename E>
@@ -12,15 +10,18 @@ public:
     explicit Result(const T& value);
     explicit Result(E* error);
     explicit Result(std::vector<E*>& errors);
+    Result(const Result& other);
+    ~Result();
     static Result success(const T& value);
     static Result fail(E* error);
     static Result fail(std::vector<E*>& errors);
+    Result& operator=(const Result& other);
     bool isSuccess();
     T getValue();
-    std::vector<SmartPointer<E> >& getErrors();
+    std::vector<E*>& getErrors();
 private:
-    SmartPointer<T> value;
-    std::vector<SmartPointer<E> > errors;
+    T *value;
+    std::vector<E*> errors;
     void swap(Result& other);
 };
 
@@ -31,13 +32,16 @@ public:
     Result();
     explicit Result(E *error);
     explicit Result(std::vector<E*>& errors_given);
+    Result(const Result& other);
+    ~Result();
     static Result success();
     static Result fail(E* error);
     static Result fail(std::vector<E*>& errors);
+    Result& operator=(const Result& other);
     bool isSuccess();
-    std::vector<SmartPointer<E> >& getErrors();
+    std::vector<E*>& getErrors();
 private:
-    std::vector<SmartPointer<E> > errors;
+    std::vector<E*> errors;
 };
 
 template <typename E>
@@ -48,15 +52,18 @@ public:
     explicit Result(Node* value);
     explicit Result(E* error);
     explicit Result(std::vector<E*>& errors);
+    Result(const Result& other);
+    ~Result();
     static Result success(Node* value);
     static Result fail(E* error);
     static Result fail(std::vector<E*>& errors);
+    Result& operator=(const Result& other);
     bool isSuccess();
     Node* getValue();
-    std::vector<SmartPointer<E> >& getErrors();
+    std::vector<E*>& getErrors();
 private:
     Node* value;
-    std::vector<SmartPointer<E> > errors;
+    std::vector<E*> errors;
     void swap(Result& other);
 };
 

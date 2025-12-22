@@ -9,4 +9,8 @@ add_executable(PROJECT main.cpp
         Instance/Instance.cpp
         Instance/Instance.h
         Evaluator/Evaluator.cpp
-        Evaluator/Evaluator.h)
+        Evaluator/Evaluator.h
+        Result/Result.tpp
+        Result/Result.hpp
+        Error/Error.cpp
+        Error/Error.h)
