@@ -12,9 +12,13 @@ public:
     ~Evaluator();
     Result<void, Error> loadFile(std::string file_name);
     double evaluate(const Instance& instance);
+    int getDepotId() const {return depot_id;}
+    int getNumberOfGroups() const {return number_of_groups;}
     int getCapacity() const {return capacity;}
     int getDimension() const {return dimension;}
 private:
+    int depot_id;
+    int number_of_groups;
     int capacity;
     int dimension;
     std::vector<std::pair<int, int>> nodes;

@@ -1,19 +1,18 @@
 #include "Evaluator.h"
-
 #include <fstream>
 #include <sstream>
+#include <string>
 
-Evaluator::Evaluator():capacity(0),dimension(0) {}
+Evaluator::Evaluator() : capacity(0), dimension(0), number_of_groups(0), depot_id(0) {}
 
 Evaluator::Evaluator(const std::string &file_name) {
+    capacity = 0;
+    dimension = 0;
+    number_of_groups = 0;
     loadFile(file_name);
 }
 
 Evaluator::~Evaluator() {}
-
-double Evaluator::calculateDistance(int i, int j) {
-
-}
 
 Result<void, Error> Evaluator::loadFile(std::string file_name) {
     std::ifstream file(file_name);
@@ -48,6 +47,14 @@ Result<void, Error> Evaluator::loadFile(std::string file_name) {
                 std::string trash;
                 ss >> keyword >> trash >> capacity;
             }
+            else if (line.find("COMMENT") != std::string::npos) {
+                std::string phrase = "No of trucks:";
+                size_t pos = line.find(phrase);
+                if (pos != std::string::npos) {
+                    std::stringstream ss_trucks(line.substr(pos + phrase.length()));
+                    ss_trucks >> number_of_groups;
+                }
+            }
             else if (line.find("NODE_COORD_SECTION") != std::string::npos) {
                 section = "COORD";
                 skip_line = true;
@@ -77,6 +84,16 @@ Result<void, Error> Evaluator::loadFile(std::string file_name) {
                         demands.push_back(demand);
                     }
                 }
+                else if (section == "DEPOT") {
+                    int id;
+                    if (ss >> id) {
+                        if (id != -1) {
+                            depot_id = id;
+                        } else {
+                            section = "";
+                        }
+                    }
+                }
             }
         }
         skip_line = false;
@@ -89,6 +106,5 @@ Result<void, Error> Evaluator::loadFile(std::string file_name) {
     if (demands.size() != dimension) {
         return Result<void, Error>::fail(new Error("[FILE ERROR] loaded demands count does not match DIMENSION"));
     }
-
     return Result<void, Error>::success();
 }

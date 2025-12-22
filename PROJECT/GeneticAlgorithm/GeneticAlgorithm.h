@@ -11,7 +11,7 @@ private:
     int population_size;
     double mutate_prob;
     double cross_prob;
-    std::vector<Instance> population;
+    std::vector<SmartPointer<Instance>> population;
 };
 
 
