@@ -128,3 +128,33 @@ double Evaluator::calculateDistance(const int id_1, const int id_2) const {
     const double distance = sqrt(pow(node_1.first - node_2.first, 2) + pow(node_1.second - node_2.second, 2));
     return distance;
 }
+
+double Evaluator::evaluate(Instance& instance) const {
+    const std::vector<int>& genotype = instance.getGenotype();
+    std::vector<std::vector<int>> truck_routes(number_of_groups);
+
+    for (int i = 0; i < genotype.size(); i++) {
+        const int truck_id = genotype[i];
+        int client_id = i + 1;
+        if (i >= depot_id - 1) {
+            client_id++;
+        }
+        truck_routes[truck_id].push_back(client_id);
+    }
+
+    double total_distance = 0.0;
+
+    for (int i = 0; i < number_of_groups; i++) {
+        if (truck_routes[i].empty()) continue;
+        double current_distance = 0.0;
+        int previous_id = depot_id;
+        for (const int j : truck_routes[i]) {
+            current_distance += calculateDistance(previous_id, j);
+            previous_id = j;
+        }
+        current_distance += calculateDistance(previous_id, depot_id);
+        total_distance += current_distance;
+    }
+
+    return total_distance;
+}

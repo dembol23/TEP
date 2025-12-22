@@ -11,7 +11,7 @@ public:
     explicit Evaluator(const std::string &file_name);
     ~Evaluator();
     Result<void, Error> loadFile(std::string file_name);
-    double evaluate(const Instance& instance);
+    double evaluate(Instance& instance) const;
     int getDepotId() const {return depot_id;}
     int getNumberOfGroups() const {return number_of_groups;}
     int getCapacity() const {return capacity;}
