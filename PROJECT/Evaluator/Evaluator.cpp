@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cmath>
 
 Evaluator::Evaluator() : capacity(0), dimension(0), number_of_groups(0), depot_id(0) {}
 
@@ -77,11 +78,17 @@ Result<void, Error> Evaluator::loadFile(std::string file_name) {
                     if (ss >> id >> x >> y) {
                         nodes.push_back(std::make_pair(x, y));
                     }
+                    else {
+                        return Result<void, Error>::fail(new Error("[FILE ERROR] could not parse section: " + section));
+                    }
                 }
                 else if (section == "DEMAND") {
                     int id, demand;
                     if (ss >> id >> demand) {
                         demands.push_back(demand);
+                    }
+                    else {
+                        return Result<void, Error>::fail(new Error("[FILE ERROR] could not parse section: " + section));
                     }
                 }
                 else if (section == "DEPOT") {
@@ -92,6 +99,9 @@ Result<void, Error> Evaluator::loadFile(std::string file_name) {
                         } else {
                             section = "";
                         }
+                    }
+                    else {
+                        return Result<void, Error>::fail(new Error("[FILE ERROR] could not parse section: " + section));
                     }
                 }
             }
@@ -107,4 +117,14 @@ Result<void, Error> Evaluator::loadFile(std::string file_name) {
         return Result<void, Error>::fail(new Error("[FILE ERROR] loaded demands count does not match DIMENSION"));
     }
     return Result<void, Error>::success();
+}
+
+double Evaluator::calculateDistance(const int id_1, const int id_2) const {
+    if (id_1 == id_2) {
+        return 0.0;
+    }
+    const std::pair<int, int>& node_1 = nodes[id_1 - 1];
+    const std::pair<int, int>& node_2 = nodes[id_2 - 1];
+    const double distance = sqrt(pow(node_1.first - node_2.first, 2) + pow(node_1.second - node_2.second, 2));
+    return distance;
 }

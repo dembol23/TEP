@@ -16,6 +16,7 @@ public:
     int getNumberOfGroups() const {return number_of_groups;}
     int getCapacity() const {return capacity;}
     int getDimension() const {return dimension;}
+    double calculateDistance(int id_1, int id_2) const;
 private:
     int depot_id;
     int number_of_groups;
@@ -23,6 +24,5 @@ private:
     int dimension;
     std::vector<std::pair<int, int>> nodes;
     std::vector<int> demands;
-    double calculateDistance(int i, int j);
 };
 
