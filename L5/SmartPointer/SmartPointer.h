@@ -8,9 +8,10 @@ class SmartPointer {
         ~SmartPointer();
         SmartPointer(const SmartPointer<T> &other);
         SmartPointer<T> &operator=(const SmartPointer<T> &other);
-        T& operator*() { return *pointer; }
-        T* operator->() { return pointer; }
+        T& operator*() const { return *pointer; }
+        T* operator->() const { return pointer; }
         int getRefCounter() const { return ref_counter->get(); }
+        bool isNull() const { return pointer == nullptr; }
     private:
         T* pointer;
         ReferencesCounter* ref_counter;

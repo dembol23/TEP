@@ -29,6 +29,8 @@ class Tree {
 public:
     Tree();
     Tree(const Tree &other);
+    Tree(Tree &&other);
+    Tree& operator=(Tree &&other);
     ~Tree();
     Tree& operator=(const Tree &other);
     Tree operator+(const Tree &other) const;
@@ -45,11 +47,11 @@ public:
     static const std::string EMPTY_TREE_ERROR;
     static const std::string INVALID_NUM_OF_ARGS_ERROR;
 private:
-    Node* root;
+    SmartPointer<Node> root;
     std::map<std::string, double> variables;
     void updateVariables();
-    void updateVariablesRecursive(const Node* node);
+    void updateVariablesRecursive(const SmartPointer<Node>& node);
     static Result<Node*, Error> buildTree(std::queue<std::string> *queue);
     Result<void, Error> join(const Tree& other);
-    static std::string printPrefixRecursive(const Node *node);
+    static std::string printPrefixRecursive(const SmartPointer<Node>& node);
 };

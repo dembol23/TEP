@@ -1,10 +1,11 @@
 #include "Node.h"
 
-#include <iostream>
 #include <map>
 #include <ostream>
 #include <cmath>
+#include <iostream>
 #include <sstream>
+#include <utility>
 
 #include "Tree.h"
 #include "../Result/Result.hpp"
@@ -22,13 +23,13 @@ void Node::swap(Node& other) {
 
 Node::Node() : type(NODE_UNKNOWN) {}
 
-Node::Node(const std::string& value, const nodeType type)
-    : value(value), type(type) {}
+Node::Node(std::string  value, const nodeType type)
+    : value(std::move(value)), type(type) {}
 
 Node::Node(const Node &other) : value(other.value), type(other.type) {
-    for (size_t i = 0; i < other.children.size(); ++i) {
-        Node* childCopy = new Node(*other.children[i]);
-        children.push_back(childCopy);
+    std::cout << "--- COPY Node: " << value << std::endl;
+    for (const auto & i : other.children) {
+        children.push_back(SmartPointer<Node>(new Node(*i)));
     }
 }
 
@@ -40,19 +41,14 @@ Node& Node::operator=(const Node &other) {
     return *this;
 }
 
-Node::~Node() {
-    for (int i = 0; i < children.size(); ++i) {
-        delete children[i];
-    }
-    children.clear();
-}
+Node::~Node() = default;
 
 Result<double, Error> Node::evaluate(const std::map<std::string, double> &vars) const {
     switch (type) {
         case NODE_CONSTANT: return Result<double, Error>::success(std::atof(value.c_str()));
 
         case NODE_VARIABLE: {
-            std::map<std::string, double>::const_iterator it = vars.find(value);
+            const auto it = vars.find(value);
             if (it != vars.end()) return Result<double, Error>::success(it->second);
             std::stringstream errSS;
             errSS << NO_VARIABLE_VALUE_ERROR << ": Brak wartości dla zmiennej: " << value;
@@ -103,9 +99,9 @@ std::string Node::printPrefixRecursive(const Node* node) {
     std::stringstream ss;
     ss << node->getValue() << " ";
 
-    const std::vector<Node*>& children = node->getChildren();
-    for (size_t i = 0; i < children.size(); ++i) {
-        ss << printPrefixRecursive(children[i]);
+    const std::vector<SmartPointer<Node> >& children = node->getChildren();
+    for (const auto & i : children) {
+        ss << printPrefixRecursive(&(*i));
     }
     return ss.str();
 }

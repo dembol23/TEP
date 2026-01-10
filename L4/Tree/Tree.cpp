@@ -44,24 +44,37 @@ static std::string validateVariable(const std::string &s) {
 
 Tree::Tree():root(nullptr) {}
 
-Tree::~Tree() {
-    delete root;
+Tree::~Tree() = default;
+
+Tree::Tree(const Tree &other) : root(nullptr) {
+    if (!other.root.isNull())
+        root = SmartPointer<Node>(new Node(*other.root));
+    else
+        root = SmartPointer<Node>(nullptr);
 }
 
-Tree::Tree(const Tree &other) {
-    if (other.root != nullptr)
-        root = new Node(*other.root);
-    else
-        root = nullptr;
+Tree::Tree(Tree &&other):root(other.root),variables(other.variables) {
+    other.root = SmartPointer<Node>(nullptr);
+}
+
+Tree &Tree::operator=(Tree &&other) {
+    if (this != &other) {
+        std::cout << "=== MOVE Tree operator= executed ===" << std::endl;
+        root = other.root;
+        other.root = SmartPointer<Node>(nullptr);
+        variables = std::move(other.variables);
+    }
+    return *this;
 }
 
 Tree& Tree::operator=(const Tree &other) {
     if (this != &other) {
-        delete root;
-        if (other.root != nullptr)
-            root = new Node(*other.root);
-        else
-            root = nullptr;
+        if (!other.root.isNull()) {
+            root = SmartPointer<Node>(new Node(*other.root));
+        }
+        else {
+            root = SmartPointer<Node>(nullptr);
+        }
         updateVariables();
     }
     return *this;
@@ -69,7 +82,7 @@ Tree& Tree::operator=(const Tree &other) {
 
 Tree Tree::operator+(const Tree &other) const {
     Tree result(*this);
-    if (root && other.root) {
+    if (!root.isNull() && !other.root.isNull()) {
         result.join(other);
     }
     return result;
@@ -88,12 +101,10 @@ Result<void, Error> Tree::enter(const std::string &formula) {
     Result<Node *, Error> node = buildTree(&queue);
     if (!node.isSuccess()) return Result<void, Error>::fail(node.getErrors());
 
-    delete root;
-    root = node.getValue();
+    root = SmartPointer<Node>(node.getValue());
 
     if (!queue.empty()) {
-        delete root;
-        root = nullptr;
+        root = SmartPointer<Node>(nullptr);
         return Result<void, Error>::fail(new Error(ENTER_ERROR + ": podano za dużo argumentów"));
     }
 
@@ -157,15 +168,15 @@ void Tree::updateVariables() {
     updateVariablesRecursive(root);
 }
 
-void Tree::updateVariablesRecursive(const Node* node) {
-    if (node == nullptr) {
+void Tree::updateVariablesRecursive(const SmartPointer<Node>& node) {
+    if (node.isNull()) {
         return;
     }
     if (node->getNodeType() == NODE_VARIABLE) {
         variables[node->getValue()] = 0.0;
     }
-    for (int i = 0; i < node->getChildren().size(); ++i) {
-        updateVariablesRecursive(node->getChildren()[i]);
+    for (const auto & i : node->getChildren()) {
+        updateVariablesRecursive(i);
     }
 }
 
@@ -181,13 +192,13 @@ std::string Tree::vars() {
 }
 
 Result<double, Error> Tree::comp(const std::string& formula) {
-    if (root == nullptr) {
+    if (root.isNull()) {
         return Result<double, Error>::fail(new Error(EMPTY_TREE_ERROR));
     }
     updateVariables();
     std::stringstream ss(formula);
     double value;
-    std::map<std::string, double>::iterator var_it = variables.begin();
+    auto var_it = variables.begin();
     while (ss >> value) {
         if (var_it != variables.end()) {
             var_it->second = value;
@@ -219,23 +230,23 @@ Result<void, Error> Tree::join(const std::string &formula) {
 }
 
 Result<void, Error> Tree::join(const Tree& other) {
-    if (other.root == nullptr) {
+    if (other.root.isNull()) {
         return Result<void, Error>::success();
     }
 
-    if (root == nullptr) {
-        root = new Node(*other.root);
+    if (root.isNull()) {
+        root = SmartPointer<Node>(new Node(*other.root));
         updateVariables();
         return Result<void, Error>::success();
     }
 
-    Node *join_node = root;
+    Node *join_node = &(*root);
     Node *parent = nullptr;
     int childIndex = 0;
     while (join_node != nullptr && join_node->getNodeType() != NODE_VARIABLE && join_node->getNodeType() != NODE_CONSTANT) {
         parent = join_node;
         if (!join_node->getChildren().empty()) {
-            join_node = join_node->getChildren()[0];
+            join_node = &(*join_node->getChildren()[0]);
             childIndex = 0;
         }
         else break;
@@ -244,8 +255,7 @@ Result<void, Error> Tree::join(const Tree& other) {
     if (parent != nullptr) {
         parent->replaceChild(childIndex, newSubTree);
     } else {
-        delete root;
-        root = newSubTree;
+        root = SmartPointer<Node>(newSubTree);
     }
     updateVariables();
     return Result<void, Error>::success();
@@ -255,22 +265,22 @@ std::string Tree::print() const {
     return printPrefixRecursive(root);
 }
 
-std::string Tree::printPrefixRecursive(const Node* node) {
-    if (node == nullptr) return "";
+std::string Tree::printPrefixRecursive(const SmartPointer<Node>& node) {
+    if (node.isNull()) return "";
 
     std::stringstream ss;
     ss << node->getValue() << " ";
 
-    const std::vector<Node*>& children = node->getChildren();
-    for (size_t i = 0; i < children.size(); ++i) {
-        ss << printPrefixRecursive(children[i]);
+    const std::vector<SmartPointer<Node> >& children = node->getChildren();
+    for (const auto & i : children) {
+        ss << printPrefixRecursive(i);
     }
     return ss.str();
 }
 
 Result<Node*, Error> Tree::getTreeAsResult() const {
-    if (root == nullptr) {
+    if (root.isNull()) {
         return Result<Node*, Error>::fail(new Error(EMPTY_TREE_ERROR));
     }
-    return Result<Node*, Error>::success(root);
+    return Result<Node*, Error>::success(&(*root));
 }

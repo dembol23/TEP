@@ -4,6 +4,7 @@
 
 #include "../Result/Result.hpp"
 #include "../Error/Error.h"
+#include "../../L5/SmartPointer/SmartPointer.h"
 
 enum nodeType {
     NODE_UNKNOWN,
@@ -16,19 +17,21 @@ enum nodeType {
 class Node {
 public:
     Node();
-    Node(const std::string& value, nodeType type);
+    Node(std::string  value, nodeType type);
     Node(const Node &other);
     Node &operator=(const Node &other);
     ~Node();
     nodeType getNodeType() const { return type; }
     const std::string& getValue() const { return value; }
-    void addChild(Node* child) { children.push_back(child); }
-    const std::vector<Node*>& getChildren() const { return children; }
+    void addChild(Node* child) { children.emplace_back(child); }
+    const std::vector<SmartPointer<Node> >& getChildren() const { return children; }
     Result<double, Error> evaluate(const std::map<std::string, double> &vars) const;
     void replaceChild(const int index, Node* newChild) {
         if (index < children.size()) {
-            delete children[index];
-            children[index] = newChild;
+            children[index] = SmartPointer<Node>(newChild);
+        }
+        else {
+            delete newChild;
         }
     }
     std::string print() const;
@@ -39,7 +42,7 @@ public:
 private:
     std::string value;
     nodeType type;
-    std::vector<Node*> children;
+    std::vector<SmartPointer<Node> > children;
     void swap(Node &other);
     static Result<double, Error> divide(double dividend, double divisor);
     static std::string printPrefixRecursive(const Node* node);
