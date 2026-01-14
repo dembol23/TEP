@@ -3,6 +3,7 @@
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <utility>
 
 // constans
 const std::string Tree::TREE_BUILD_ERROR = "[Błąd podczas budowy drzewa]";
@@ -53,17 +54,13 @@ Tree::Tree(const Tree &other) : root(nullptr) {
         root = SmartPointer<Node>(nullptr);
 }
 
-Tree::Tree(Tree &&other):root(other.root),variables(other.variables) {
-    other.root = SmartPointer<Node>(nullptr);
-}
+Tree::Tree(Tree &&other) noexcept :root(std::move(other.root)),variables(std::move(other.variables)) {}
 
-Tree &Tree::operator=(Tree &&other) {
-    if (this != &other) {
-        std::cout << "=== MOVE Tree operator= executed ===" << std::endl;
-        root = other.root;
-        other.root = SmartPointer<Node>(nullptr);
-        variables = std::move(other.variables);
-    }
+Tree &Tree::operator=(Tree &&other) noexcept {
+    if (this == &other) return *this;
+    std::cout << "=== MOVE Tree operator= executed ===" << std::endl;
+    root = std::exchange(other.root, SmartPointer<Node>(nullptr));
+    variables = std::exchange(other.variables, {});
     return *this;
 }
 
@@ -120,35 +117,32 @@ Result<Node*, Error> Tree::buildTree(std::queue<std::string> *queue) {
     queue->pop();
 
     if (BINARY_OPERATORS.count(current_value) > 0) {
-        Node* node = new Node(current_value, NODE_OPERATOR_BINARY);
+        const SmartPointer<Node> node(new Node(current_value, NODE_OPERATOR_BINARY));
         Result<Node*, Error> first = buildTree(queue);
         if (!first.isSuccess()) {
-            delete node;
             return Result<Node*, Error>::fail(first.getErrors());
         }
-        node->addChild(first.getValue());
+        node->addChild(SmartPointer<Node>(first.getValue()));
 
         Result<Node*, Error> second = buildTree(queue);
         if (!second.isSuccess()) {
-            delete node;
             return Result<Node*, Error>::fail(second.getErrors());
         }
-        node->addChild(second.getValue());
+        node->addChild(SmartPointer<Node>(second.getValue()));
 
-        return Result<Node*, Error>::success(node);
+        return Result<Node*, Error>::success(node.get());
     }
 
     if (UNARY_OPERATORS.count(current_value) > 0) {
-        Node* node = new Node(current_value, NODE_OPERATOR_UNARY);
+        const SmartPointer<Node> node(new Node(current_value, NODE_OPERATOR_UNARY));
 
         Result<Node*, Error> first = buildTree(queue);
         if (!first.isSuccess()) {
-            delete node;
             return Result<Node*, Error>::fail(first.getErrors());
         }
-        node->addChild(first.getValue());
+        node->addChild(SmartPointer<Node>(first.getValue()));
 
-        return Result<Node*, Error>::success(node);
+        return Result<Node*, Error>::success(node.get());
     }
 
     if (isNumber(current_value)) {
@@ -240,42 +234,39 @@ Result<void, Error> Tree::join(const Tree& other) {
         return Result<void, Error>::success();
     }
 
-    Node *join_node = &(*root);
+    Node *join_node = root.get();
     Node *parent = nullptr;
     int childIndex = 0;
     while (join_node != nullptr && join_node->getNodeType() != NODE_VARIABLE && join_node->getNodeType() != NODE_CONSTANT) {
         parent = join_node;
         if (!join_node->getChildren().empty()) {
-            join_node = &(*join_node->getChildren()[0]);
+            join_node = join_node->getChildren()[0].get();
             childIndex = 0;
         }
         else break;
     }
-    Node* newSubTree = new Node(*other.root);
+    SmartPointer<Node> newSubTree(new Node(*other.root));
     if (parent != nullptr) {
-        parent->replaceChild(childIndex, newSubTree);
+        parent->replaceChild(childIndex, std::move(newSubTree));
     } else {
-        root = SmartPointer<Node>(newSubTree);
+        root = std::move(newSubTree);
     }
     updateVariables();
     return Result<void, Error>::success();
 }
 
 std::string Tree::print() const {
-    return printPrefixRecursive(root);
+    std::stringstream ss;
+    printPrefixRecursive(root, ss);
+    return ss.str();
 }
 
-std::string Tree::printPrefixRecursive(const SmartPointer<Node>& node) {
-    if (node.isNull()) return "";
-
-    std::stringstream ss;
-    ss << node->getValue() << " ";
-
-    const std::vector<SmartPointer<Node> >& children = node->getChildren();
-    for (const auto & i : children) {
-        ss << printPrefixRecursive(i);
+void Tree::printPrefixRecursive(const SmartPointer<Node>& node, std::ostream& os) {
+    if (node.isNull()) return;
+    os << node->getValue() << " ";
+    for (const auto & child : node->getChildren()) {
+        printPrefixRecursive(child, os);
     }
-    return ss.str();
 }
 
 Result<Node*, Error> Tree::getTreeAsResult() const {

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(L5)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 add_executable(L5 main.cpp
         SmartPointer/SmartPointer.tpp

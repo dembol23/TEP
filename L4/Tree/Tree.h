@@ -29,8 +29,8 @@ class Tree {
 public:
     Tree();
     Tree(const Tree &other);
-    Tree(Tree &&other);
-    Tree& operator=(Tree &&other);
+    Tree(Tree &&other) noexcept;
+    Tree& operator=(Tree &&other) noexcept;
     ~Tree();
     Tree& operator=(const Tree &other);
     Tree operator+(const Tree &other) const;
@@ -53,5 +53,5 @@ private:
     void updateVariablesRecursive(const SmartPointer<Node>& node);
     static Result<Node*, Error> buildTree(std::queue<std::string> *queue);
     Result<void, Error> join(const Tree& other);
-    static std::string printPrefixRecursive(const SmartPointer<Node>& node);
+    static void printPrefixRecursive(const SmartPointer<Node>& node, std::ostream& os);
 };

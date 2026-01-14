@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(L4)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 add_executable(L4 main.cpp
         Error/Error.cpp

@@ -3,8 +3,8 @@
 class ReferencesCounter {
     public:
         ReferencesCounter():counter(1){};
-        int add() { return ++counter; }
-        int sub() { return --counter; }
+        int inc() { return ++counter; }
+        int dec() { return --counter; }
         int get() const { return counter; }
     private:
         int counter;

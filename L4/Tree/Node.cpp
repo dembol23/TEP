@@ -15,7 +15,7 @@ const std::string Node::WRONG_CHILDREN_NUMBER_ERROR = "[Błąd liczby dzieci ope
 const std::string Node::UNKNOWN_OPERATOR_ERROR = "[Nieznany operator]";
 const std::string Node::DIVIDING_BY_ZERO_ERROR = "[Dzielenie przez 0]";
 
-void Node::swap(Node& other) {
+void Node::swap(Node& other) noexcept {
     std::swap(value, other.value);
     std::swap(type, other.type);
     children.swap(other.children);
@@ -87,21 +87,4 @@ Result<double, Error> Node::divide(double dividend, double divisor) {
         return Result<double, Error>::fail(new Error(DIVIDING_BY_ZERO_ERROR));
     }
     return Result<double, Error>(dividend/divisor);
-}
-
-std::string Node::print() const {
-    return printPrefixRecursive(this);
-}
-
-std::string Node::printPrefixRecursive(const Node* node) {
-    if (node == nullptr) return "";
-
-    std::stringstream ss;
-    ss << node->getValue() << " ";
-
-    const std::vector<SmartPointer<Node> >& children = node->getChildren();
-    for (const auto & i : children) {
-        ss << printPrefixRecursive(&(*i));
-    }
-    return ss.str();
 }

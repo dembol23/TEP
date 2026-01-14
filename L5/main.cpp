@@ -25,14 +25,12 @@ int main() {
 
     std::cout << "\n=== TEST 2: Kopiowanie (operator=) ===" << std::endl;
     std::cout << "Oczekiwane: Seria komunikatow '--- COPY Node...'" << std::endl;
-    Tree tree2;
-    tree2 = tree1; // Tu zachodzi GŁĘBOKA KOPIA
+    Tree tree2 = tree1; // Tu zachodzi GŁĘBOKA KOPIA
     std::cout << "Drzewo 2 (kopia): " << tree2.print() << std::endl;
 
     std::cout << "\n=== TEST 3: Przenoszenie (std::move) ===" << std::endl;
     std::cout << "Oczekiwane: BRAK komunikatow '--- COPY Node...' (0 kopii)" << std::endl;
-    Tree tree3;
-    tree3 = std::move(tree1); // Tu zachodzi PRZENIESIENIE (kradzież root)
+    Tree tree3 = std::move(tree1); // Tu zachodzi PRZENIESIENIE (kradzież root)
     std::cout << "Drzewo 3 (przeniesione): " << tree3.print() << std::endl;
 
     std::cout << "Drzewo 1 (po przeniesieniu powinno byc puste lub zniszczone): '"
