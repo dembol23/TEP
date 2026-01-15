@@ -12,4 +12,6 @@ add_executable(L5 main.cpp
         ../L4/Tree/Tree.cpp
         ../L4/Tree/Tree.h
         ../L4/Tree/Node.cpp
-        ../L4/Tree/Node.h)
+        ../L4/Tree/Node.h
+        BorrowingPointer/BorrowingPointer.tpp
+        BorrowingPointer/BorrowingPointer.h)
