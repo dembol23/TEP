@@ -14,12 +14,16 @@ int main() {
             std::cout << "Wartosc BP: " << *(*bp) << std::endl;
         }
         if (bp->get() == nullptr) {
-            std::cout << "bp wygasl" << std::endl;
+            std::cout << "1bp wygasl" << std::endl;
         } else {
-            std::cout << "bp nie wygasl!" << std::endl;
+            std::cout << "1bp nie wygasl" << std::endl;
         }
     }
-
+    if (bp->get() == nullptr) {
+        std::cout << "2bp wygasl" << std::endl;
+    } else {
+        std::cout << "2bp nie wygasl" << std::endl;
+    }
 
 
     delete bp;

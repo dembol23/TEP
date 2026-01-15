@@ -8,7 +8,9 @@ public:
         if (ref_counter) ref_counter->addBorrowingPointer(this);
     }
 
-    BorrowingPointer(const BorrowingPointer& other) : pointer(other.pointer), ref_counter(other.ref_counter) {}
+    BorrowingPointer(const BorrowingPointer& other) : pointer(other.pointer), ref_counter(other.ref_counter) {
+        ref_counter->addBorrowingPointer(this);
+    }
 
     BorrowingPointer& operator=(const BorrowingPointer<T>& other) {
         if (this == &other) return *this;
@@ -43,4 +45,3 @@ private:
     ReferencesCounter<T>* ref_counter;
 };
 
-#include "BorrowingPointer.tpp"

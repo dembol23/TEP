@@ -25,6 +25,7 @@ private:
     ReferencesCounter<T> * ref_counter;
     void release() {
         if (ref_counter && ref_counter->dec() == 0) {
+            ref_counter->clearBorrowingPointers();
             delete pointer;
             delete ref_counter;
         }
