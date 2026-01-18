@@ -5,7 +5,7 @@ template<typename T>
 SmartPointer<T>::SmartPointer(T *pointer) {
     this->pointer = pointer;
     if (this->pointer) {
-        ref_counter = new ReferencesCounter();
+        ref_counter = new ReferencesCounter<T>();
         ref_counter->inc();
     }
     else {
@@ -21,7 +21,6 @@ SmartPointer<T>::~SmartPointer() {
 template<typename T>
 SmartPointer<T> &SmartPointer<T>::operator=(const SmartPointer<T> &other){
     if (this == &other) return *this;
-
     release();
 
     pointer = other.pointer;
@@ -42,7 +41,7 @@ SmartPointer<T>::SmartPointer(const SmartPointer<T> &other){
 }
 
 template<typename T>
-SmartPointer<T>::SmartPointer(SmartPointer<T> &&other) noexcept :pointer(other.pointer), ref_counter(other.ref_counter) {
+SmartPointer<T>::SmartPointer(SmartPointer<T> &&other) noexcept : pointer(other.pointer), ref_counter(other.ref_counter) {
     other.pointer = nullptr;
     other.ref_counter = nullptr;
 }
@@ -59,3 +58,7 @@ SmartPointer<T> &SmartPointer<T>::operator=(SmartPointer<T> &&other) noexcept {
     return *this;
 }
 
+template<typename T>
+BorrowingPointer<T> SmartPointer<T>::borrow() {
+    return BorrowingPointer<T>(pointer, ref_counter);
+}
