@@ -15,4 +15,6 @@ add_executable(PROJECT main.cpp
         Error/Error.cpp
         Error/Error.h
         ../L5/SmartPointer/SmartPointer.h
-        ../L5/SmartPointer/SmartPointer.tpp)
+        ../L5/SmartPointer/SmartPointer.tpp
+        Interface/Interface.cpp
+        Interface/Interface.h)
