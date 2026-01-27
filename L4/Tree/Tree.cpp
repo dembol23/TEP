@@ -117,32 +117,35 @@ Result<Node*, Error> Tree::buildTree(std::queue<std::string> *queue) {
     queue->pop();
 
     if (BINARY_OPERATORS.count(current_value) > 0) {
-        const SmartPointer<Node> node(new Node(current_value, NODE_OPERATOR_BINARY));
+        Node* node = new Node(current_value, NODE_OPERATOR_BINARY);
         Result<Node*, Error> first = buildTree(queue);
         if (!first.isSuccess()) {
+            delete node;
             return Result<Node*, Error>::fail(first.getErrors());
         }
         node->addChild(SmartPointer<Node>(first.getValue()));
 
         Result<Node*, Error> second = buildTree(queue);
         if (!second.isSuccess()) {
+            delete node;
             return Result<Node*, Error>::fail(second.getErrors());
         }
         node->addChild(SmartPointer<Node>(second.getValue()));
 
-        return Result<Node*, Error>::success(node.get());
+        return Result<Node*, Error>::success(node);
     }
 
     if (UNARY_OPERATORS.count(current_value) > 0) {
-        const SmartPointer<Node> node(new Node(current_value, NODE_OPERATOR_UNARY));
+        Node* node = new Node(current_value, NODE_OPERATOR_UNARY);
 
         Result<Node*, Error> first = buildTree(queue);
         if (!first.isSuccess()) {
+            delete node;
             return Result<Node*, Error>::fail(first.getErrors());
         }
         node->addChild(SmartPointer<Node>(first.getValue()));
 
-        return Result<Node*, Error>::success(node.get());
+        return Result<Node*, Error>::success(node);
     }
 
     if (isNumber(current_value)) {

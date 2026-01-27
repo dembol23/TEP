@@ -1,11 +1,15 @@
 #pragma once
-#include <vector>
 
 template<typename T, typename E>
 Result<T, E>::Result():value(nullptr) {}
 
 template<typename T, typename E>
 Result<T, E>::Result(const T &value):value(new T(value)) {}
+
+template<typename T, typename E>
+Result<T, E>::Result(SmartPointer<E> error) : value(nullptr) {
+    errors.push_back(error);
+}
 
 template<typename T, typename E>
 Result<T, E>::Result(std::vector<SmartPointer<E>> &errors_given):value(nullptr) {
@@ -15,7 +19,7 @@ Result<T, E>::Result(std::vector<SmartPointer<E>> &errors_given):value(nullptr) 
 }
 
 template<typename T, typename E>
-T Result<T, E>::getValue() {return value;}
+T Result<T, E>::getValue() {return *value;}
 
 template<typename T, typename E>
 std::vector<SmartPointer<E>> &Result<T, E>::getErrors() {return errors;}

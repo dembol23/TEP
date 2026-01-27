@@ -11,6 +11,7 @@ class Result
 public:
     Result();
     explicit Result(const T& value);
+    explicit Result(SmartPointer<E> error);
     explicit Result(std::vector<SmartPointer<E>> &errors_given);
     static Result success(const T& value);
     static Result fail(E* error);

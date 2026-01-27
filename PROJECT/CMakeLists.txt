@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(PROJECT)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 add_executable(PROJECT main.cpp
         GeneticAlgorithm/GeneticAlgorithm.cpp
@@ -13,4 +13,8 @@ add_executable(PROJECT main.cpp
         Result/Result.tpp
         Result/Result.hpp
         Error/Error.cpp
-        Error/Error.h)
+        Error/Error.h
+        ../L5/SmartPointer/SmartPointer.h
+        ../L5/SmartPointer/SmartPointer.tpp
+        Interface/Interface.cpp
+        Interface/Interface.h)
